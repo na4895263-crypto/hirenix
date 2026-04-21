@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HireNix — Find Jobs Others Can't</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #1a1a2e; overflow-x: hidden; }
+    a { text-decoration: none; }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(15,23,42,0.97);
+      backdrop-filter: blur(10px);
+      padding: 16px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .logo { font-size: 24px; font-weight: 800; color: #38bdf8; letter-spacing: 1px; }
+    .logo span { color: #fff; }
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a { color: #94a3b8; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: #fff; }
+    .nav-cta {
+      background: #0ea5e9; color: #fff !important;
+      padding: 10px 22px; border-radius: 8px;
+      font-weight: 700 !important; font-size: 14px;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: #0284c7 !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 20px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(14,165,233,0.15) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.3);
+      color: #38bdf8; font-size: 13px; font-weight: 600;
+      padding: 6px 16px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; background: #38bdf8; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 {
+      font-size: 68px; font-weight: 900; line-height: 1.1;
+      color: #fff; margin-bottom: 24px; position: relative;
+    }
+    .hero h1 span { color: #38bdf8; }
+    .hero p {
+      font-size: 20px; color: #94a3b8; max-width: 580px;
+      margin: 0 auto 44px; line-height: 1.7; position: relative;
+    }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .btn-hero-primary {
+      background: #0ea5e9; color: #fff;
+      padding: 16px 36px; border-radius: 10px;
+      font-size: 16px; font-weight: 700;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(14,165,233,0.4);
+    }
+    .btn-hero-primary:hover { background: #0284c7; transform: translateY(-2px); box-shadow: 0 0 40px rgba(14,165,233,0.6); }
+    .btn-hero-secondary {
+      background: transparent; color: #fff;
+      padding: 16px 36px; border-radius: 10px;
+      font-size: 16px; font-weight: 600;
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+    .btn-hero-secondary:hover { border-color: #38bdf8; color: #38bdf8; }
+    .hero-stats {
+      display: flex; gap: 48px; justify-content: center;
+      margin-top: 64px; position: relative;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 36px; font-weight: 800; color: #fff; }
+    .stat-label { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+    /* ── LOGOS ── */
+    .logos { background: #f8fafc; padding: 40px 60px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+    .logos p { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; }
+    .logos-row { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; align-items: center; }
+    .logos-row span { font-size: 18px; font-weight: 800; color: #cbd5e1; letter-spacing: 1px; }
+
+    /* ── HOW IT WORKS ── */
+    .how { padding: 100px 60px; background: #fff; text-align: center; }
+    .section-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #0ea5e9; margin-bottom: 14px; }
+    .section-title { font-size: 42px; font-weight: 800; color: #0f172a; margin-bottom: 16px; }
+    .section-sub { font-size: 17px; color: #64748b; max-width: 520px; margin: 0 auto 64px; line-height: 1.7; }
+    .steps { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
+    .step-card {
+      background: #f8fafc; border-radius: 16px; padding: 40px 32px;
+      width: 280px; text-align: center; border: 2px solid #e2e8f0;
+      transition: all 0.2s; position: relative;
+    }
+    .step-card:hover { border-color: #0ea5e9; transform: translateY(-4px); box-shadow: 0 12px 40px rgba(14,165,233,0.1); }
+    .step-num {
+      width: 56px; height: 56px; background: #0f172a; color: #38bdf8;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800; margin: 0 auto 20px;
+    }
+    .step-card h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+    .step-card p { font-size: 14px; color: #64748b; line-height: 1.7; }
+    .step-arrow { font-size: 28px; color: #cbd5e1; display: flex; align-items: center; margin-top: 20px; }
+
+    /* ── FEATURES ── */
+    .features { padding: 100px 60px; background: #0f172a; }
+    .features-inner { max-width: 1100px; margin: 0 auto; }
+    .features .section-title { color: #fff; }
+    .features .section-sub { color: #64748b; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; }
+    .feature-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 32px 28px; transition: all 0.2s;
+    }
+    .feature-card:hover { background: rgba(14,165,233,0.08); border-color: rgba(14,165,233,0.3); }
+    .feature-icon { font-size: 32px; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .feature-card p { font-size: 14px; color: #64748b; line-height: 1.7; }
+
+    /* ── PRICING PREVIEW ── */
+    .pricing-section { padding: 100px 60px; background: #f8fafc; text-align: center; }
+    .plans { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; max-width: 1000px; margin: 64px auto 0; }
+    .plan {
+      background: #fff; border-radius: 16px; padding: 36px 32px;
+      width: 280px; border: 2px solid #e2e8f0; transition: all 0.2s;
+    }
+    .plan:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+    .plan.popular { border-color: #0ea5e9; position: relative; }
+    .popular-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: #0ea5e9; color: #fff; font-size: 11px; font-weight: 700;
+      padding: 4px 16px; border-radius: 20px; white-space: nowrap; letter-spacing: 1px;
+    }
+    .plan-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #64748b; margin-bottom: 10px; }
+    .plan-price { font-size: 44px; font-weight: 800; color: #0f172a; }
+    .plan-price span { font-size: 16px; font-weight: 400; color: #94a3b8; }
+    .plan-desc { font-size: 13px; color: #64748b; margin: 10px 0 24px; }
+    .plan-features { list-style: none; text-align: left; margin-bottom: 28px; }
+    .plan-features li { font-size: 13px; color: #334155; padding: 6px 0; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #f1f5f9; }
+    .plan-features li:last-child { border: none; }
+    .plan-btn {
+      display: block; width: 100%; text-align: center;
+      padding: 13px; border-radius: 8px; font-size: 14px; font-weight: 700;
+      transition: all 0.2s;
+    }
+    .plan-btn-outline { border: 2px solid #e2e8f0; color: #334155; background: transparent; }
+    .plan-btn-outline:hover { border-color: #0ea5e9; color: #0ea5e9; }
+    .plan-btn-primary { background: #0ea5e9; color: #fff; }
+    .plan-btn-primary:hover { background: #0284c7; }
+    .plan-btn-dark { background: #0f172a; color: #fff; }
+    .plan-btn-dark:hover { background: #1e293b; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { padding: 100px 60px; background: #fff; text-align: center; }
+    .testimonials-grid { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; max-width: 1000px; margin: 64px auto 0; }
+    .testimonial {
+      background: #f8fafc; border-radius: 16px; padding: 32px 28px;
+      width: 300px; text-align: left; border: 2px solid #e2e8f0;
+    }
+    .stars { color: #fbbf24; font-size: 16px; margin-bottom: 14px; }
+    .testimonial p { font-size: 14px; color: #334155; line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #0f172a; display: flex; align-items: center; justify-content: center; color: #38bdf8; font-weight: 700; font-size: 16px; }
+    .author-info h4 { font-size: 14px; font-weight: 700; color: #0f172a; }
+    .author-info span { font-size: 12px; color: #94a3b8; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      padding: 80px 60px; text-align: center;
+    }
+    .cta-banner h2 { font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 36px; }
+    .cta-banner a {
+      display: inline-block; background: #fff; color: #0ea5e9;
+      padding: 16px 44px; border-radius: 10px; font-size: 16px; font-weight: 800;
+      transition: all 0.2s;
+    }
+    .cta-banner a:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+    /* ── FOOTER ── */
+    footer { background: #0f172a; padding: 60px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
+    .footer-brand .logo { font-size: 22px; }
+    .footer-brand p { font-size: 14px; color: #64748b; margin-top: 10px; max-width: 240px; line-height: 1.7; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 14px; color: #64748b; margin-bottom: 10px; transition: color 0.2s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); margin-top: 48px; padding-top: 24px; text-align: center; color: #475569; font-size: 13px; }
+
+    @media (max-width: 768px) {
+      header { padding: 16px 20px; }
+      .hero h1 { font-size: 40px; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
+      .features-grid { grid-template-columns: 1fr; }
+      .how, .features, .pricing-section, .testimonials { padding: 60px 20px; }
+      footer { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="/" class="logo">Hire<span>Nix</span></a>
+  <nav>
+    <a href="/pricing">Pricing</a>
+    <a href="mailto:support@hirenix.org">Support</a>
+    <a href="/pricing" class="nav-cta">Get Started Free →</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now finding jobs in 20+ cities across the USA
+    </div>
+    <h1>Find Jobs<br/><span>Others Can't.</span></h1>
+    <p>HireNix scans hundreds of sources to find you personalized job matches — including hidden opportunities most job seekers never see.</p>
+    <div class="hero-btns">
+      <a href="/pricing" class="btn-hero-primary">Start Free — No Credit Card</a>
+      <a href="/pricing" class="btn-hero-secondary">See Pricing →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Cities Covered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Job Sources</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Match Accuracy</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">H1B</div>
+        <div class="stat-label">Visa Filtering</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos">
+  <p>Jobs sourced from top platforms</p>
+  <div class="logos-row">
+    <span>LinkedIn</span>
+    <span>Indeed</span>
+    <span>Glassdoor</span>
+    <span>ZipRecruiter</span>
+    <span>Company Sites</span>
+    <span>& More</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-title">3 Steps to Your Next Job</h2>
+  <p class="section-sub">HireNix does the hard work so you can focus on applying — not searching.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h3>Create Your Profile</h3>
+      <p>Tell us your job title, skills, location, experience level and visa status. Takes 2 minutes.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h3>Get Matched Jobs</h3>
+      <p>HireNix searches hundreds of sources and scores every job based on your unique profile.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h3>Apply with Confidence</h3>
+      <p>Get a tailored resume and cover letter for each job. Apply in minutes, not hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <div class="section-tag">Why HireNix</div>
+    <h2 class="section-title">Everything You Need to Land Your Next Role</h2>
+    <p class="section-sub">We built every feature with one goal — getting you hired faster.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Hidden Job Discovery</h3>
+        <p>We find jobs from sources most people never check — company career pages, niche boards, and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Smart Match Scoring</h3>
+        <p>Every job gets a match score based on your skills and experience. Best fits always shown first.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛂</div>
+        <h3>H1B Visa Filtering</h3>
+        <p>Every job is flagged for H1B sponsorship status. Never waste time on jobs that won't sponsor you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Resume Tailoring</h3>
+        <p>Get a resume automatically tailored to each specific job — matching keywords employers look for.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✉️</div>
+        <h3>Daily Job Digest</h3>
+        <p>Fresh job matches delivered to your inbox every morning. Never miss a new opportunity.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Application Tracker</h3>
+        <p>Track every application in one place. Know exactly where you stand in every hiring process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING PREVIEW -->
+<section class="pricing-section">
+  <div class="section-tag">Pricing</div>
+  <h2 class="section-title">Simple, Transparent Pricing</h2>
+  <p class="section-sub">Start free. Upgrade when you're ready. No hidden fees ever.</p>
+  <div class="plans">
+
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0 <span>/ forever</span></div>
+      <div class="plan-desc">Try HireNix risk-free</div>
+      <ul class="plan-features">
+        <li>✅ 5 hand-picked job matches</li>
+        <li>✅ Smart match scoring</li>
+        <li>✅ H1B sponsorship flag</li>
+        <li>❌ No daily digest</li>
+        <li>❌ No resume tailoring</li>
+      </ul>
+      <a href="/pricing" class="plan-btn plan-btn-outline">Start Free</a>
+    </div>
+
+    <div class="plan popular">
+      <div class="popular-badge">⭐ MOST POPULAR</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$15 <span>/ month</span></div>
+      <div class="plan-desc">For active job seekers</div>
+      <ul class="plan-features">
+        <li>✅ 100 hand-picked jobs/month</li>
+        <li>✅ Unlimited job browsing</li>
+        <li>✅ Daily digest email</li>
+        <li>✅ H1B filtering</li>
+        <li>✅ Resume tailoring</li>
+      </ul>
+      <a href="/pricing" class="plan-btn plan-btn-primary">Get Pro — $15/mo</a>
+    </div>
+
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">$25 <span>/ month</span></div>
+      <div class="plan-desc">The ultimate advantage</div>
+      <ul class="plan-features">
+        <li>✅ 200 hand-picked jobs/month</li>
+        <li>✅ Unlimited job browsing</li>
+        <li>✅ Daily digest email</li>
+        <li>✅ H1B filtering</li>
+        <li>✅ Cover letters included</li>
+      </ul>
+      <a href="/pricing" class="plan-btn plan-btn-dark">Get Premium — $25/mo</a>
+    </div>
+
+  </div>
+  <p style="margin-top: 32px; font-size: 14px; color: #94a3b8;">Need more jobs? <a href="/pricing" style="color: #0ea5e9;">Buy add-on packs anytime →</a></p>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-tag">Success Stories</div>
+  <h2 class="section-title">Job Seekers Love HireNix</h2>
+  <p class="section-sub">Real people finding real jobs — faster than ever before.</p>
+  <div class="testimonials-grid">
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p>"HireNix found me a job at a company I never would have found on my own. The H1B filtering saved me so much time!"</p>
+      <div class="testimonial-author">
+        <div class="avatar">A</div>
+        <div class="author-info">
+          <h4>Ahmed K.</h4>
+          <span>Test Engineer — Austin, TX</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p>"I was spending 3 hours a day searching for jobs. HireNix cut that down to 15 minutes. Got 4 interviews in my first week!"</p>
+      <div class="testimonial-author">
+        <div class="avatar">S</div>
+        <div class="author-info">
+          <h4>Sarah M.</h4>
+          <span>Software Engineer — Chicago, IL</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p>"The resume tailoring feature is incredible. Every application felt personalized and I started getting callbacks immediately."</p>
+      <div class="testimonial-author">
+        <div class="avatar">R</div>
+        <div class="author-info">
+          <h4>Raj P.</h4>
+          <span>Data Analyst — New York, NY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Ready to Find Jobs Others Can't?</h2>
+  <p>Join thousands of job seekers finding their next role faster with HireNix.</p>
+  <a href="/pricing">Start Free Today — No Credit Card Required</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">Hire<span style="color:#fff">Nix</span></div>
+      <p>Find jobs others can't. Personalized job matching powered by smart technology.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="/pricing">Pricing</a>
+      <a href="/pricing">How It Works</a>
+      <a href="/pricing">H1B Jobs</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/refund">Refund Policy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="mailto:support@hirenix.org">support@hirenix.org</a>
+      <a href="/pricing">FAQ</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 HireNix. All rights reserved. · Find jobs others can't.
+  </div>
+</footer>
+
+</body>
+</html>
