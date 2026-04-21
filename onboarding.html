@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Set Up Your Profile — HireNix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: #06070f; color: #fff; min-height: 100vh; }
+
+    /* BG */
+    .bg-orb-1 {
+      position: fixed; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%);
+      top: -150px; left: -150px; pointer-events: none;
+    }
+    .bg-orb-2 {
+      position: fixed; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+      bottom: -100px; right: -100px; pointer-events: none;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 24px 60px; display: flex; align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: relative; z-index: 10;
+    }
+    .logo {
+      font-size: 24px; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .header-right { font-size: 13px; color: #475569; }
+    .header-right span { color: #a78bfa; font-weight: 600; }
+
+    /* PROGRESS BAR */
+    .progress-bar {
+      height: 3px; background: rgba(255,255,255,0.06);
+      position: relative; z-index: 10;
+    }
+    .progress-fill {
+      height: 100%; width: 33%;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      transition: width 0.5s ease;
+    }
+
+    /* STEP INDICATORS */
+    .steps-nav {
+      display: flex; justify-content: center; gap: 0;
+      padding: 28px 60px; position: relative; z-index: 10;
+      max-width: 700px; margin: 0 auto;
+    }
+    .step-dot {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; flex: 1; cursor: pointer;
+    }
+    .step-dot .dot {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; transition: all 0.3s;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); color: #475569;
+      position: relative; z-index: 1;
+    }
+    .step-dot.active .dot {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      border-color: transparent; color: #fff;
+      box-shadow: 0 0 20px rgba(124,58,237,0.5);
+    }
+    .step-dot.done .dot {
+      background: rgba(34,197,94,0.2); border-color: #22c55e; color: #22c55e;
+    }
+    .step-dot .label { font-size: 12px; color: #334155; font-weight: 500; white-space: nowrap; }
+    .step-dot.active .label { color: #a78bfa; }
+    .step-dot.done .label { color: #22c55e; }
+    .step-line {
+      flex: 1; height: 2px; background: rgba(255,255,255,0.06);
+      margin-top: 18px; max-width: 80px;
+    }
+
+    /* MAIN */
+    .main { max-width: 720px; margin: 0 auto; padding: 20px 40px 80px; position: relative; z-index: 10; }
+
+    /* STEP PANELS */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .panel-header { margin-bottom: 36px; }
+    .panel-tag {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 3px;
+      background: rgba(124,58,237,0.2); color: #a78bfa;
+      padding: 5px 14px; border-radius: 50px; margin-bottom: 14px;
+    }
+    .panel-header h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .panel-header p { font-size: 15px; color: #475569; line-height: 1.6; }
+
+    /* RESUME UPLOAD */
+    .upload-zone {
+      border: 2px dashed rgba(124,58,237,0.4);
+      border-radius: 20px; padding: 60px 40px;
+      text-align: center; cursor: pointer;
+      transition: all 0.3s; margin-bottom: 24px;
+      background: rgba(124,58,237,0.05);
+      position: relative;
+    }
+    .upload-zone:hover { border-color: #7c3aed; background: rgba(124,58,237,0.1); }
+    .upload-zone.dragging { border-color: #22d3ee; background: rgba(6,182,212,0.1); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 52px; margin-bottom: 16px; }
+    .upload-zone h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .upload-zone p { font-size: 14px; color: #475569; }
+    .upload-zone .formats {
+      display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap;
+    }
+    .format-tag {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: #64748b; font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 50px;
+    }
+    .upload-success {
+      display: none; align-items: center; gap: 14px;
+      background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);
+      border-radius: 14px; padding: 18px 24px; margin-bottom: 24px;
+    }
+    .upload-success .check { font-size: 28px; }
+    .upload-success h4 { font-size: 15px; font-weight: 700; color: #22c55e; }
+    .upload-success p { font-size: 13px; color: #475569; }
+    .upload-success .reupload { font-size: 13px; color: #a78bfa; cursor: pointer; margin-top: 4px; display: inline-block; }
+
+    /* FORM FIELDS */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
+    .form-grid.single { grid-template-columns: 1fr; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 13px 16px; border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-size: 14px; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; outline: none; cursor: pointer;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #7c3aed; background: rgba(124,58,237,0.08);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+    }
+    .form-group input::placeholder { color: #334155; }
+    .form-group select option { background: #0f172a; }
+
+    /* CHIP SELECTORS */
+    .chip-group { margin-bottom: 24px; }
+    .chip-group label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 12px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      padding: 9px 18px; border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: #64748b; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; user-select: none;
+    }
+    .chip:hover { border-color: #7c3aed; color: #a78bfa; }
+    .chip.selected {
+      background: rgba(124,58,237,0.2);
+      border-color: #7c3aed; color: #a78bfa; font-weight: 600;
+    }
+    .chip-note { font-size: 12px; color: #334155; margin-top: 8px; }
+
+    /* RANGE SLIDER */
+    .slider-group { margin-bottom: 24px; }
+    .slider-group label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 12px; }
+    .salary-display {
+      font-size: 22px; font-weight: 800; color: #a78bfa; margin-bottom: 12px;
+    }
+    input[type="range"] {
+      width: 100%; accent-color: #7c3aed; height: 6px; cursor: pointer;
+    }
+    .range-labels { display: flex; justify-content: space-between; font-size: 12px; color: #334155; margin-top: 6px; }
+
+    /* H1B TOGGLE */
+    .toggle-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 16px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .toggle-card:hover { border-color: rgba(124,58,237,0.4); }
+    .toggle-card.active { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.4); }
+    .toggle-info h4 { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .toggle-info p { font-size: 13px; color: #475569; }
+    .toggle-switch {
+      width: 48px; height: 26px; border-radius: 50px;
+      background: rgba(255,255,255,0.1); position: relative;
+      transition: all 0.3s; flex-shrink: 0;
+    }
+    .toggle-switch::after {
+      content: ''; position: absolute; width: 20px; height: 20px;
+      border-radius: 50%; background: #fff; top: 3px; left: 3px;
+      transition: all 0.3s;
+    }
+    .toggle-card.active .toggle-switch { background: linear-gradient(135deg, #7c3aed, #06b6d4); }
+    .toggle-card.active .toggle-switch::after { left: 25px; }
+
+    /* DIVIDER */
+    .section-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 28px 0; }
+
+    /* NAV BUTTONS */
+    .nav-btns { display: flex; gap: 14px; margin-top: 36px; }
+    .btn-back {
+      padding: 14px 28px; border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8; font-size: 15px; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-next {
+      flex: 1; padding: 14px; border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 15px; font-weight: 700;
+      border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s; box-shadow: 0 0 30px rgba(124,58,237,0.3);
+    }
+    .btn-next:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,0.5); }
+
+    /* SUCCESS */
+    .success-screen {
+      display: none; text-align: center; padding: 60px 40px;
+      animation: fadeIn 0.6s ease;
+    }
+    .success-screen.active { display: block; }
+    .success-icon { font-size: 80px; margin-bottom: 24px; }
+    .success-screen h2 { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+    .success-screen h2 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .success-screen p { font-size: 17px; color: #475569; margin-bottom: 40px; line-height: 1.7; }
+    .success-btn {
+      display: inline-block; padding: 18px 52px; border-radius: 50px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 16px; font-weight: 700;
+      box-shadow: 0 0 40px rgba(124,58,237,0.4);
+      transition: all 0.3s; text-decoration: none;
+    }
+    .success-btn:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(124,58,237,0.6); }
+    .confetti { font-size: 28px; letter-spacing: 8px; margin-bottom: 20px; }
+
+    @media (max-width: 768px) {
+      .header { padding: 20px; }
+      .main { padding: 20px 20px 60px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .steps-nav { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-orb-1"></div>
+<div class="bg-orb-2"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="/" class="logo">HireNix</a>
+  <div class="header-right">Step <span id="currentStep">1</span> of 3</div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- STEP INDICATORS -->
+<div class="steps-nav">
+  <div class="step-dot active" id="dot-1">
+    <div class="dot">1</div>
+    <div class="label">Upload Resume</div>
+  </div>
+  <div class="step-line"></div>
+  <div class="step-dot" id="dot-2">
+    <div class="dot">2</div>
+    <div class="label">Job Preferences</div>
+  </div>
+  <div class="step-line"></div>
+  <div class="step-dot" id="dot-3">
+    <div class="dot">3</div>
+    <div class="label">Final Filters</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- ── STEP 1: RESUME UPLOAD ── -->
+  <div class="step-panel active" id="step-1">
+    <div class="panel-header">
+      <div class="panel-tag">Step 1 of 3</div>
+      <h2>Upload Your Resume 📄</h2>
+      <p>We'll analyze your resume to find the best job matches for your skills and experience. Required to get started.</p>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" onchange="handleFileUpload(this)" />
+      <div class="upload-icon">📂</div>
+      <h3>Drop your resume here</h3>
+      <p>or click to browse your files</p>
+      <div class="formats">
+        <span class="format-tag">PDF</span>
+        <span class="format-tag">DOC</span>
+        <span class="format-tag">DOCX</span>
+        <span class="format-tag">Max 5MB</span>
+      </div>
+    </div>
+
+    <div class="upload-success" id="uploadSuccess">
+      <div class="check">✅</div>
+      <div>
+        <h4>Resume uploaded successfully!</h4>
+        <p id="fileName">your-resume.pdf</p>
+        <span class="reupload" onclick="reupload()">Upload a different file →</span>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-next" onclick="nextStep(2)">Continue to Job Preferences →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: JOB PREFERENCES ── -->
+  <div class="step-panel" id="step-2">
+    <div class="panel-header">
+      <div class="panel-tag">Step 2 of 3</div>
+      <h2>Your Job Preferences 🎯</h2>
+      <p>Tell us what kind of jobs you're looking for. The more specific, the better your matches.</p>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Job Title / Role *</label>
+        <input type="text" placeholder="e.g. Test Engineer, Software Engineer" />
+      </div>
+      <div class="form-group">
+        <label>Preferred Location *</label>
+        <input type="text" placeholder="e.g. Austin TX, New York NY" />
+      </div>
+    </div>
+
+    <div class="chip-group">
+      <label>Experience Level *</label>
+      <div class="chips">
+        <div class="chip" onclick="toggleChip(this)">🎓 Entry Level (0–2 yrs)</div>
+        <div class="chip selected" onclick="toggleChip(this)">💼 Mid Level (2–5 yrs)</div>
+        <div class="chip" onclick="toggleChip(this)">🏆 Senior Level (5–8 yrs)</div>
+        <div class="chip" onclick="toggleChip(this)">👑 Lead / Principal (8+ yrs)</div>
+      </div>
+    </div>
+
+    <div class="chip-group">
+      <label>Work Mode *</label>
+      <div class="chips">
+        <div class="chip selected" onclick="toggleChip(this)">🏢 On-site</div>
+        <div class="chip selected" onclick="toggleChip(this)">🏠 Remote</div>
+        <div class="chip selected" onclick="toggleChip(this)">🔀 Hybrid</div>
+      </div>
+    </div>
+
+    <div class="chip-group">
+      <label>Job Type *</label>
+      <div class="chips">
+        <div class="chip selected" onclick="toggleChip(this)">✅ Full-time</div>
+        <div class="chip" onclick="toggleChip(this)">📋 Contract</div>
+        <div class="chip" onclick="toggleChip(this)">⏰ Part-time</div>
+        <div class="chip" onclick="toggleChip(this)">🚀 Internship</div>
+      </div>
+    </div>
+
+    <div class="slider-group">
+      <label>Expected Salary Range</label>
+      <div class="salary-display" id="salaryDisplay">$60,000 – $120,000</div>
+      <input type="range" min="30" max="300" value="90" step="5" oninput="updateSalary(this.value)" />
+      <div class="range-labels">
+        <span>$30K</span>
+        <span>$100K</span>
+        <span>$200K</span>
+        <span>$300K+</span>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(1)">← Back</button>
+      <button class="btn-next" onclick="nextStep(3)">Continue to Final Filters →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: FINAL FILTERS ── -->
+  <div class="step-panel" id="step-3">
+    <div class="panel-header">
+      <div class="panel-tag">Step 3 of 3</div>
+      <h2>Final Filters 🔧</h2>
+      <p>Last step! These filters make your job matches even more precise.</p>
+    </div>
+
+    <!-- H1B -->
+    <div class="chip-group">
+      <label>Visa & Work Authorization</label>
+    </div>
+    <div class="toggle-card" id="h1bToggle" onclick="toggleCard('h1bToggle')">
+      <div class="toggle-info">
+        <h4>🛂 I need H1B Visa Sponsorship</h4>
+        <p>Only show jobs from companies that sponsor H1B visas</p>
+      </div>
+      <div class="toggle-switch"></div>
+    </div>
+    <div class="toggle-card" id="citizenToggle" onclick="toggleCard('citizenToggle')">
+      <div class="toggle-info">
+        <h4>🇺🇸 I am a US Citizen / Green Card holder</h4>
+        <p>Show all jobs including those requiring security clearance</p>
+      </div>
+      <div class="toggle-switch"></div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="chip-group">
+      <label>Industry / Domain</label>
+      <div class="chips">
+        <div class="chip selected" onclick="toggleChip(this)">💻 Technology</div>
+        <div class="chip" onclick="toggleChip(this)">🏥 Healthcare</div>
+        <div class="chip" onclick="toggleChip(this)">🛡️ Defense / Aerospace</div>
+        <div class="chip" onclick="toggleChip(this)">💰 Finance / Fintech</div>
+        <div class="chip" onclick="toggleChip(this)">🏭 Manufacturing</div>
+        <div class="chip" onclick="toggleChip(this)">⚡ Energy</div>
+        <div class="chip" onclick="toggleChip(this)">🎓 Education</div>
+        <div class="chip" onclick="toggleChip(this)">🛒 Retail / E-Commerce</div>
+      </div>
+    </div>
+
+    <div class="chip-group">
+      <label>Company Size Preference</label>
+      <div class="chips">
+        <div class="chip" onclick="toggleChip(this)">🚀 Startup (1–50)</div>
+        <div class="chip selected" onclick="toggleChip(this)">🏬 Mid-size (50–500)</div>
+        <div class="chip selected" onclick="toggleChip(this)">🏢 Large (500–5000)</div>
+        <div class="chip selected" onclick="toggleChip(this)">🌐 Enterprise (5000+)</div>
+      </div>
+    </div>
+
+    <div class="chip-group">
+      <label>Skills (select all that apply)</label>
+      <div class="chips">
+        <div class="chip" onclick="toggleChip(this)">Python</div>
+        <div class="chip" onclick="toggleChip(this)">LabVIEW</div>
+        <div class="chip" onclick="toggleChip(this)">SQL</div>
+        <div class="chip" onclick="toggleChip(this)">Java</div>
+        <div class="chip" onclick="toggleChip(this)">React</div>
+        <div class="chip" onclick="toggleChip(this)">AWS</div>
+        <div class="chip" onclick="toggleChip(this)">PCBA Testing</div>
+        <div class="chip" onclick="toggleChip(this)">ATE</div>
+        <div class="chip" onclick="toggleChip(this)">TestStand</div>
+        <div class="chip" onclick="toggleChip(this)">Data Analysis</div>
+        <div class="chip" onclick="toggleChip(this)">Machine Learning</div>
+        <div class="chip" onclick="toggleChip(this)">Salesforce</div>
+      </div>
+      <div class="chip-note">Can't find your skill? Type it in the job title field above.</div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="form-grid single">
+      <div class="form-group">
+        <label>Open to Relocation?</label>
+        <select>
+          <option>Yes — I can relocate anywhere in the US</option>
+          <option>Yes — but only within my state</option>
+          <option>No — local jobs only</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(2)">← Back</button>
+      <button class="btn-next" onclick="finishOnboarding()">🚀 Find My Jobs Now!</button>
+    </div>
+  </div>
+
+  <!-- ── SUCCESS ── -->
+  <div class="success-screen" id="successScreen">
+    <div class="confetti">🎉 🎊 🎉</div>
+    <div class="success-icon">✅</div>
+    <h2>You're All Set,<br/><span>Let's Find Your Job!</span></h2>
+    <p>Your profile is ready. HireNix is now scanning hundreds of sources to find your best job matches. Check your dashboard!</p>
+    <a href="/dashboard" class="success-btn">🔍 See My Job Matches →</a>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+  let fileUploaded = false;
+
+  function nextStep(step) {
+    if (step === 2 && !fileUploaded) {
+      alert('Please upload your resume to continue. It\'s required to find your best matches!');
+      return;
+    }
+    showStep(step);
+  }
+
+  function prevStep(step) { showStep(step); }
+
+  function showStep(step) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step-' + step).classList.add('active');
+
+    // Update dots
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < step) dot.classList.add('done');
+      if (i === step) dot.classList.add('active');
+    }
+
+    // Update progress
+    document.getElementById('progressFill').style.width = (step * 33) + '%';
+    document.getElementById('currentStep').textContent = step;
+    currentStep = step;
+    window.scrollTo(0, 0);
+  }
+
+  function handleFileUpload(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('uploadZone').style.display = 'none';
+      document.getElementById('uploadSuccess').style.display = 'flex';
+      fileUploaded = true;
+    }
+  }
+
+  function reupload() {
+    document.getElementById('uploadZone').style.display = 'block';
+    document.getElementById('uploadSuccess').style.display = 'none';
+    fileUploaded = false;
+  }
+
+  function toggleChip(el) { el.classList.toggle('selected'); }
+
+  function toggleCard(id) {
+    document.getElementById(id).classList.toggle('active');
+  }
+
+  function updateSalary(val) {
+    const min = Math.round(val * 0.6);
+    const max = Math.round(val * 1.4);
+    document.getElementById('salaryDisplay').textContent =
+      '$' + (min * 1000).toLocaleString() + ' – $' + (max * 1000).toLocaleString();
+  }
+
+  function finishOnboarding() {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('successScreen').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // Drag and drop
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragging'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault(); zone.classList.remove('dragging');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('uploadZone').style.display = 'none';
+      document.getElementById('uploadSuccess').style.display = 'flex';
+      fileUploaded = true;
+    }
+  });
+</script>
+</body>
+</html>

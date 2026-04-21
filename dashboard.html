@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — HireNix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #06070f;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── TOPNAV ── */
+    .topnav {
+      background: rgba(6,7,15,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 32px; }
+    .logo {
+      font-size: 22px; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-link {
+      padding: 7px 14px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; color: #64748b;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    .nav-link.active { color: #a78bfa; background: rgba(167,139,250,0.1); }
+
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .usage-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50px; padding: 6px 14px;
+      font-size: 13px;
+    }
+    .usage-pill .count { font-weight: 700; color: #a78bfa; }
+    .usage-pill .total { color: #334155; }
+    .upgrade-btn {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 13px; font-weight: 700;
+      padding: 8px 18px; border-radius: 50px; border: none;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    }
+    .upgrade-btn:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(124,58,237,0.5); }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 20px;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-title {
+      font-size: 11px; font-weight: 700; color: #334155;
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    /* Search bar in sidebar */
+    .search-bar {
+      position: relative; margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 100%; padding: 10px 14px 10px 38px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; color: #fff;
+      font-size: 14px; font-family: 'DM Sans', sans-serif;
+      outline: none; transition: all 0.2s;
+    }
+    .search-bar input:focus { border-color: #7c3aed; background: rgba(124,58,237,0.08); }
+    .search-bar input::placeholder { color: #334155; }
+    .search-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: #334155; font-size: 15px;
+    }
+
+    /* Filter chips */
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-chip {
+      padding: 6px 12px; border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px; color: #64748b;
+      cursor: pointer; transition: all 0.2s; user-select: none;
+    }
+    .filter-chip:hover { border-color: rgba(167,139,250,0.4); color: #a78bfa; }
+    .filter-chip.active {
+      background: rgba(124,58,237,0.15);
+      border-color: rgba(124,58,237,0.4);
+      color: #a78bfa; font-weight: 600;
+    }
+
+    /* Salary slider */
+    .salary-range { margin-top: 10px; }
+    .salary-labels { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 10px; }
+    .salary-labels span { font-weight: 600; color: #94a3b8; }
+    input[type=range] {
+      width: 100%; height: 4px; border-radius: 2px;
+      background: linear-gradient(to right, #7c3aed 0%, #7c3aed 60%, rgba(255,255,255,0.1) 60%);
+      outline: none; -webkit-appearance: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: #a78bfa;
+      box-shadow: 0 0 8px rgba(167,139,250,0.5);
+    }
+
+    /* H1B filter */
+    .h1b-filter {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 12px 14px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .h1b-filter:hover { border-color: rgba(167,139,250,0.3); }
+    .h1b-filter.active { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.1); }
+    .h1b-filter-label { font-size: 13px; color: #94a3b8; font-weight: 500; }
+    .h1b-filter-label span { font-size: 11px; color: #475569; display: block; margin-top: 2px; }
+    .toggle {
+      width: 40px; height: 22px; border-radius: 11px;
+      background: rgba(255,255,255,0.1); position: relative;
+      transition: all 0.3s; flex-shrink: 0;
+    }
+    .toggle.on { background: #7c3aed; }
+    .toggle::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle.on::after { left: 21px; }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      padding: 28px 32px;
+      min-width: 0;
+    }
+
+    /* Header row */
+    .main-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .main-header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+    .main-header h1 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .results-count { font-size: 14px; color: #475569; margin-top: 3px; }
+
+    .sort-select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 9px 14px;
+      color: #94a3b8; font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      outline: none; cursor: pointer;
+    }
+
+    /* ── UPGRADE BANNER (shows for free users) ── */
+    .upgrade-banner {
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1));
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 16px; padding: 20px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; gap: 16px;
+    }
+    .upgrade-banner-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .upgrade-banner-text p { font-size: 13px; color: #64748b; }
+    .upgrade-banner-text p strong { color: #a78bfa; }
+    .banner-btn {
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 13px; font-weight: 700;
+      padding: 10px 22px; border-radius: 50px; border: none;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(124,58,237,0.35);
+      transition: all 0.2s;
+    }
+    .banner-btn:hover { transform: translateY(-1px); }
+
+    /* ── JOB CARDS ── */
+    .jobs-grid { display: flex; flex-direction: column; gap: 14px; }
+
+    .job-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 22px 24px;
+      transition: all 0.25s; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .job-card:hover {
+      border-color: rgba(167,139,250,0.3);
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .job-card.locked {
+      opacity: 0.45; filter: blur(1.5px);
+      pointer-events: none;
+    }
+    .job-card.locked::after {
+      content: '🔒 Upgrade to unlock';
+      position: absolute; inset: 0;
+      background: rgba(6,7,15,0.7);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #a78bfa;
+      border-radius: 16px; pointer-events: all;
+      cursor: pointer; filter: none;
+      backdrop-filter: blur(0px);
+    }
+
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 14px;
+    }
+    .card-left { display: flex; align-items: flex-start; gap: 14px; flex: 1; min-width: 0; }
+
+    .company-logo {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .job-info { min-width: 0; }
+    .job-title {
+      font-size: 16px; font-weight: 700; color: #fff;
+      margin-bottom: 4px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .company-name { font-size: 14px; color: #64748b; font-weight: 500; }
+
+    .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+
+    /* Match score */
+    .match-score {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 50px; padding: 5px 12px;
+    }
+    .match-score .score-num { font-size: 15px; font-weight: 800; color: #a78bfa; }
+    .match-score .score-label { font-size: 11px; color: #7c3aed; font-weight: 600; }
+
+    .match-score.high { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); }
+    .match-score.high .score-num { color: #34d399; }
+    .match-score.high .score-label { color: #10b981; }
+
+    .match-score.med { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); }
+    .match-score.med .score-num { color: #fbbf24; }
+    .match-score.med .score-label { color: #f59e0b; }
+
+    /* H1B badge */
+    .h1b-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px;
+      white-space: nowrap;
+    }
+    .h1b-confirmed { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+    .h1b-likely { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+    .h1b-unknown { background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.2); }
+    .h1b-no { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+    /* Meta row */
+    .card-meta {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin-bottom: 14px;
+    }
+    .meta-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 13px; color: #475569;
+    }
+    .meta-item svg { opacity: 0.5; }
+
+    /* Tags */
+    .card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+    .tag {
+      font-size: 11px; font-weight: 600; color: #64748b;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 4px 10px; border-radius: 6px;
+    }
+
+    /* Card footer */
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .posted-time { font-size: 12px; color: #334155; }
+    .card-actions { display: flex; gap: 10px; }
+    .save-btn {
+      padding: 8px 16px; border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #64748b; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .save-btn:hover { border-color: rgba(167,139,250,0.3); color: #a78bfa; }
+    .save-btn.saved { border-color: rgba(167,139,250,0.4); color: #a78bfa; background: rgba(124,58,237,0.1); }
+    .apply-btn {
+      padding: 8px 20px; border-radius: 8px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 13px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .apply-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+
+    /* ── LOCKED OVERLAY (over last cards for free) ── */
+    .upgrade-wall {
+      background: linear-gradient(to bottom, transparent, rgba(6,7,15,0.97) 40%);
+      position: relative; margin-top: -80px;
+      padding: 100px 0 40px; text-align: center;
+      border-radius: 0 0 16px 16px;
+    }
+    .upgrade-wall h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+    .upgrade-wall h3 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .upgrade-wall p { font-size: 14px; color: #475569; margin-bottom: 24px; }
+    .wall-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 15px; font-weight: 700;
+      padding: 14px 36px; border-radius: 50px; border: none;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 0 40px rgba(124,58,237,0.4);
+      transition: all 0.3s;
+    }
+    .wall-btn:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(124,58,237,0.6); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 80px 40px;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; color: #475569; }
+
+    /* ── MODAL (upgrade) ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #0d0f1e;
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 24px; padding: 40px;
+      max-width: 480px; width: 90%;
+      transform: scale(0.95); transition: transform 0.3s;
+    }
+    .modal-backdrop.open .modal { transform: scale(1); }
+    .modal-close {
+      float: right; background: none; border: none;
+      color: #475569; font-size: 20px; cursor: pointer;
+      line-height: 1; margin-top: -8px;
+    }
+    .modal h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .modal h2 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .modal p { font-size: 14px; color: #475569; margin-bottom: 28px; }
+    .plan-cards-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+    .plan-mini {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 18px;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+    }
+    .plan-mini:hover, .plan-mini.selected {
+      border-color: rgba(124,58,237,0.5);
+      background: rgba(124,58,237,0.1);
+    }
+    .plan-mini .plan-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .plan-mini .plan-price { font-size: 22px; font-weight: 800; color: #a78bfa; }
+    .plan-mini .plan-price span { font-size: 13px; color: #475569; font-weight: 400; }
+    .plan-mini .plan-jobs { font-size: 12px; color: #64748b; margin-top: 6px; }
+    .modal-cta {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 12px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 0 30px rgba(124,58,237,0.4);
+      transition: all 0.2s;
+    }
+    .modal-cta:hover { transform: translateY(-1px); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { padding: 20px 16px; }
+      .topnav { padding: 0 16px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOPNAV ── -->
+<nav class="topnav">
+  <div class="nav-left">
+    <a href="/" class="logo">HireNix</a>
+    <div class="nav-links">
+      <a href="/dashboard" class="nav-link active">Jobs</a>
+      <a href="#" class="nav-link">Saved</a>
+      <a href="#" class="nav-link">Applications</a>
+      <a href="#" class="nav-link">Resume</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="usage-pill">
+      <span class="count" id="usedCount">3</span>
+      <span class="total">/ 5 jobs</span>
+    </div>
+    <a href="/pricing" class="upgrade-btn">⚡ Upgrade to Pro</a>
+    <div class="avatar" onclick="toggleUserMenu()">N</div>
+  </div>
+</nav>
+
+<!-- ── LAYOUT ── -->
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <!-- Search -->
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search job title..." id="searchInput" oninput="filterJobs()" />
+    </div>
+
+    <!-- Job Type -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Job Type</div>
+      <div class="filter-chips">
+        <div class="filter-chip active" onclick="toggleFilter(this)">Full-Time</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Part-Time</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Contract</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Internship</div>
+      </div>
+    </div>
+
+    <!-- Work Mode -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Work Mode</div>
+      <div class="filter-chips">
+        <div class="filter-chip active" onclick="toggleFilter(this)">Remote</div>
+        <div class="filter-chip active" onclick="toggleFilter(this)">Hybrid</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">On-site</div>
+      </div>
+    </div>
+
+    <!-- Experience -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Experience Level</div>
+      <div class="filter-chips">
+        <div class="filter-chip" onclick="toggleFilter(this)">Entry Level</div>
+        <div class="filter-chip active" onclick="toggleFilter(this)">Mid Level</div>
+        <div class="filter-chip active" onclick="toggleFilter(this)">Senior</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Lead / Manager</div>
+      </div>
+    </div>
+
+    <!-- Salary -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Minimum Salary</div>
+      <div class="salary-range">
+        <div class="salary-labels">
+          <span>$30K</span>
+          <span id="salaryVal">$120K</span>
+          <span>$300K</span>
+        </div>
+        <input type="range" min="30" max="300" value="120" step="5"
+          oninput="document.getElementById('salaryVal').textContent='$'+this.value+'K'" />
+      </div>
+    </div>
+
+    <!-- H1B -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Visa Sponsorship</div>
+      <div class="h1b-filter active" onclick="toggleH1B(this)" id="h1bFilter">
+        <div class="h1b-filter-label">
+          H1B Sponsorship Only
+          <span>Show confirmed & likely sponsors</span>
+        </div>
+        <div class="toggle on" id="h1bToggle"></div>
+      </div>
+    </div>
+
+    <!-- Date Posted -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">Date Posted</div>
+      <div class="filter-chips">
+        <div class="filter-chip active" onclick="toggleFilter(this)">Last 24h</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Last 3 days</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Last week</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">This month</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <h1>Your Job Matches <span>✨</span></h1>
+        <div class="results-count" id="resultsCount">Showing 5 of 47 matching roles</div>
+      </div>
+      <select class="sort-select">
+        <option>Best Match</option>
+        <option>Most Recent</option>
+        <option>Highest Salary</option>
+        <option>Company Rating</option>
+      </select>
+    </div>
+
+    <!-- Upgrade banner for free users -->
+    <div class="upgrade-banner" id="upgradeBanner">
+      <div class="upgrade-banner-text">
+        <h3>🔒 You're seeing 5 of 47 matches</h3>
+        <p>Upgrade to <strong>Pro</strong> to unlock 100 unique job matches — including <strong>8 high-fit roles</strong> you're missing right now.</p>
+      </div>
+      <button class="banner-btn" onclick="openUpgradeModal()">Unlock All Jobs →</button>
+    </div>
+
+    <!-- JOB CARDS -->
+    <div class="jobs-grid" id="jobsGrid">
+
+      <!-- Card 1 — Visible (score 94) -->
+      <div class="job-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="company-logo">🏢</div>
+            <div class="job-info">
+              <div class="job-title">Senior Software Engineer — Backend</div>
+              <div class="company-name">Stripe · San Francisco, CA</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="match-score high">
+              <span class="score-num">94</span>
+              <span class="score-label">match</span>
+            </div>
+            <span class="h1b-badge h1b-confirmed">✅ H1B Confirmed</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">📍 San Francisco, CA</div>
+          <div class="meta-item">💼 Full-Time</div>
+          <div class="meta-item">🏠 Hybrid</div>
+          <div class="meta-item">💰 $160K – $220K</div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Go</span>
+          <span class="tag">AWS</span>
+          <span class="tag">Microservices</span>
+          <span class="tag">PostgreSQL</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted-time">⏰ Posted 4 hours ago</span>
+          <div class="card-actions">
+            <button class="save-btn" onclick="toggleSave(this)">♡ Save</button>
+            <a href="#" class="apply-btn" onclick="trackApply(event)">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 — Visible (score 88) -->
+      <div class="job-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="company-logo">🔵</div>
+            <div class="job-info">
+              <div class="job-title">Full Stack Engineer (Node.js / React)</div>
+              <div class="company-name">Notion · Remote (US)</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="match-score high">
+              <span class="score-num">88</span>
+              <span class="score-label">match</span>
+            </div>
+            <span class="h1b-badge h1b-confirmed">✅ H1B Confirmed</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">📍 Remote</div>
+          <div class="meta-item">💼 Full-Time</div>
+          <div class="meta-item">🏠 100% Remote</div>
+          <div class="meta-item">💰 $140K – $185K</div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">GraphQL</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted-time">⏰ Posted 11 hours ago</span>
+          <div class="card-actions">
+            <button class="save-btn" onclick="toggleSave(this)">♡ Save</button>
+            <a href="#" class="apply-btn" onclick="trackApply(event)">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 — Visible (score 81) -->
+      <div class="job-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="company-logo">🟠</div>
+            <div class="job-info">
+              <div class="job-title">Software Engineer II — Platform</div>
+              <div class="company-name">Cloudflare · Austin, TX</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="match-score">
+              <span class="score-num">81</span>
+              <span class="score-label">match</span>
+            </div>
+            <span class="h1b-badge h1b-likely">🔶 H1B Likely</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">📍 Austin, TX</div>
+          <div class="meta-item">💼 Full-Time</div>
+          <div class="meta-item">🏠 Hybrid</div>
+          <div class="meta-item">💰 $130K – $170K</div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">Rust</span>
+          <span class="tag">Go</span>
+          <span class="tag">Kubernetes</span>
+          <span class="tag">Edge Computing</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted-time">⏰ Posted 1 day ago</span>
+          <div class="card-actions">
+            <button class="save-btn" onclick="toggleSave(this)">♡ Save</button>
+            <a href="#" class="apply-btn" onclick="trackApply(event)">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 — Visible (score 75) -->
+      <div class="job-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="company-logo">🟣</div>
+            <div class="job-info">
+              <div class="job-title">Backend Engineer — Data Infrastructure</div>
+              <div class="company-name">Figma · New York, NY</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="match-score med">
+              <span class="score-num">75</span>
+              <span class="score-label">match</span>
+            </div>
+            <span class="h1b-badge h1b-confirmed">✅ H1B Confirmed</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">📍 New York, NY</div>
+          <div class="meta-item">💼 Full-Time</div>
+          <div class="meta-item">🏠 On-site</div>
+          <div class="meta-item">💰 $150K – $200K</div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Spark</span>
+          <span class="tag">Kafka</span>
+          <span class="tag">Snowflake</span>
+          <span class="tag">dbt</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted-time">⏰ Posted 2 days ago</span>
+          <div class="card-actions">
+            <button class="save-btn" onclick="toggleSave(this)">♡ Save</button>
+            <a href="#" class="apply-btn" onclick="trackApply(event)">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 — Visible (score 68) -->
+      <div class="job-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="company-logo">🟢</div>
+            <div class="job-info">
+              <div class="job-title">Software Engineer — Growth Team</div>
+              <div class="company-name">Linear · Remote (Worldwide)</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="match-score med">
+              <span class="score-num">68</span>
+              <span class="score-label">match</span>
+            </div>
+            <span class="h1b-badge h1b-unknown">⚠️ Sponsorship Unknown</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <div class="meta-item">📍 Remote</div>
+          <div class="meta-item">💼 Full-Time</div>
+          <div class="meta-item">🏠 100% Remote</div>
+          <div class="meta-item">💰 $120K – $155K</div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">TypeScript</span>
+          <span class="tag">React</span>
+          <span class="tag">Electron</span>
+        </div>
+        <div class="card-footer">
+          <span class="posted-time">⏰ Posted 3 days ago</span>
+          <div class="card-actions">
+            <button class="save-btn" onclick="toggleSave(this)">♡ Save</button>
+            <a href="#" class="apply-btn" onclick="trackApply(event)">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- UPGRADE WALL -->
+    <div class="upgrade-wall" id="upgradeWall">
+      <h3>42 More Jobs Waiting for You <span>🚀</span></h3>
+      <p>Unlock your full match list — including 8 jobs with 85+ scores you haven't seen yet.</p>
+      <button class="wall-btn" onclick="openUpgradeModal()">Upgrade to Pro — $15/mo →</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── UPGRADE MODAL ── -->
+<div class="modal-backdrop" id="upgradeModal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeUpgradeModal()">✕</button>
+    <h2>Unlock More <span>Matches</span></h2>
+    <p>You've seen your 5 free matches. Upgrade to see up to 200 hand-picked job matches tailored to your profile.</p>
+    <div class="plan-cards-mini">
+      <div class="plan-mini selected" onclick="selectPlan(this)">
+        <div class="plan-name">⚡ Pro</div>
+        <div class="plan-price">$15<span>/mo</span></div>
+        <div class="plan-jobs">100 unique matches</div>
+      </div>
+      <div class="plan-mini" onclick="selectPlan(this)">
+        <div class="plan-name">💎 Premium</div>
+        <div class="plan-price">$25<span>/mo</span></div>
+        <div class="plan-jobs">200 unique matches</div>
+      </div>
+    </div>
+    <button class="modal-cta" onclick="goToPricing()">Get Pro Access →</button>
+  </div>
+</div>
+
+<script>
+  // ── Filter chip toggle
+  function toggleFilter(el) {
+    el.classList.toggle('active');
+  }
+
+  // ── H1B toggle
+  function toggleH1B(container) {
+    container.classList.toggle('active');
+    document.getElementById('h1bToggle').classList.toggle('on');
+  }
+
+  // ── Save button
+  function toggleSave(btn) {
+    if (btn.classList.contains('saved')) {
+      btn.classList.remove('saved');
+      btn.textContent = '♡ Save';
+    } else {
+      btn.classList.add('saved');
+      btn.textContent = '♥ Saved';
+    }
+  }
+
+  // ── Track apply click (stub for backend)
+  function trackApply(e) {
+    e.preventDefault();
+    // In production: track click, then open job URL
+    const usedCount = parseInt(document.getElementById('usedCount').textContent);
+    document.getElementById('usedCount').textContent = Math.min(usedCount + 1, 5);
+    alert('In the live app, this will open the job application page!');
+  }
+
+  // ── Upgrade modal
+  function openUpgradeModal() {
+    document.getElementById('upgradeModal').classList.add('open');
+  }
+  function closeUpgradeModal() {
+    document.getElementById('upgradeModal').classList.remove('open');
+  }
+  function closeModalOnBackdrop(e) {
+    if (e.target === document.getElementById('upgradeModal')) closeUpgradeModal();
+  }
+  function selectPlan(el) {
+    document.querySelectorAll('.plan-mini').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  function goToPricing() {
+    window.location.href = '/pricing';
+  }
+
+  // ── User menu stub
+  function toggleUserMenu() {
+    alert('Profile settings coming soon!');
+  }
+</script>
+
+</body>
+</html>

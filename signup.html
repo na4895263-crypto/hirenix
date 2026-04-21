@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up — HireNix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #06070f; color: #fff;
+      min-height: 100vh; display: flex;
+      overflow: hidden;
+    }
+
+    /* LEFT PANEL */
+    .left {
+      width: 50%; min-height: 100vh;
+      background: linear-gradient(135deg, #0f0720 0%, #0c1a2e 100%);
+      display: flex; flex-direction: column;
+      justify-content: center; padding: 60px;
+      position: relative; overflow: hidden;
+    }
+    .left::before {
+      content: ''; position: absolute;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%);
+      top: -100px; left: -100px;
+    }
+    .left::after {
+      content: ''; position: absolute;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+    .left-logo {
+      font-size: 28px; font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 60px; position: relative; z-index: 1;
+      text-decoration: none; display: inline-block;
+    }
+    .left-content { position: relative; z-index: 1; }
+    .left-content h2 {
+      font-size: 42px; font-weight: 800; line-height: 1.2;
+      letter-spacing: -1px; margin-bottom: 20px;
+    }
+    .left-content h2 span {
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .left-content p { font-size: 16px; color: #475569; line-height: 1.7; margin-bottom: 48px; }
+    .features-list { list-style: none; }
+    .features-list li {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 15px; color: #94a3b8; margin-bottom: 18px;
+    }
+    .features-list li .icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(124,58,237,0.2); display: flex;
+      align-items: center; justify-content: center; font-size: 18px;
+      flex-shrink: 0;
+    }
+    .features-list li strong { color: #fff; display: block; font-size: 14px; }
+    .features-list li span { font-size: 13px; color: #475569; }
+
+    /* TESTIMONIAL */
+    .testimonial-card {
+      margin-top: 48px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 24px;
+      position: relative; z-index: 1;
+    }
+    .testimonial-card p { font-size: 14px; color: #64748b; font-style: italic; line-height: 1.7; margin-bottom: 14px; }
+    .t-author { display: flex; align-items: center; gap: 10px; }
+    .t-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px;
+    }
+    .t-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .t-role { font-size: 12px; color: #475569; }
+    .stars { color: #f59e0b; font-size: 13px; letter-spacing: 1px; margin-bottom: 10px; }
+
+    /* RIGHT PANEL */
+    .right {
+      width: 50%; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 80px; background: #06070f;
+    }
+    .form-box { width: 100%; max-width: 420px; }
+    .form-box h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .form-box .sub { font-size: 15px; color: #475569; margin-bottom: 36px; }
+    .form-box .sub a { color: #a78bfa; }
+
+    /* GOOGLE BTN */
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 15px; border-radius: 12px;
+      background: #fff; color: #1a1a1a;
+      font-size: 15px; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: all 0.3s; margin-bottom: 28px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(255,255,255,0.1);
+    }
+    .google-btn:hover { background: #f0f0f0; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,255,255,0.15); }
+    .google-icon { width: 20px; height: 20px; }
+
+    /* DIVIDER */
+    .divider {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+    .divider span { font-size: 13px; color: #334155; white-space: nowrap; }
+
+    /* FORM */
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 8px; }
+    .form-group input {
+      width: 100%; padding: 14px 16px; border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; outline: none;
+    }
+    .form-group input:focus { border-color: #7c3aed; background: rgba(124,58,237,0.08); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+    .form-group input::placeholder { color: #334155; }
+
+    /* SUBMIT BTN */
+    .submit-btn {
+      width: 100%; padding: 15px; border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff; font-size: 15px; font-weight: 700;
+      border: none; cursor: pointer; transition: all 0.3s;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 0 30px rgba(124,58,237,0.3);
+      margin-top: 8px;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,0.5); }
+
+    .terms-note {
+      font-size: 12px; color: #334155; text-align: center;
+      margin-top: 16px; line-height: 1.7;
+    }
+    .terms-note a { color: #6366f1; }
+
+    .login-link {
+      text-align: center; margin-top: 28px;
+      font-size: 14px; color: #475569;
+    }
+    .login-link a { color: #a78bfa; font-weight: 600; }
+
+    /* PLAN BADGE */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: #a78bfa; font-size: 12px; font-weight: 600;
+      padding: 6px 14px; border-radius: 50px; margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      body { flex-direction: column; overflow: auto; }
+      .left { width: 100%; min-height: auto; padding: 40px 30px; }
+      .right { width: 100%; padding: 40px 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left">
+  <a href="/" class="left-logo">HireNix</a>
+  <div class="left-content">
+    <h2>Find Jobs<br/><span>Others Can't.</span></h2>
+    <p>Join thousands of job seekers who found their next role faster with HireNix's smart job matching.</p>
+    <ul class="features-list">
+      <li>
+        <div class="icon">🔍</div>
+        <div>
+          <strong>Hidden Job Discovery</strong>
+          <span>Jobs from 500+ sources most people never check</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">🏆</div>
+        <div>
+          <strong>AI Match Scoring</strong>
+          <span>Every job scored 0–100 based on your profile</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">🛂</div>
+        <div>
+          <strong>H1B Visa Filtering</strong>
+          <span>Only see jobs that will actually sponsor you</span>
+        </div>
+      </li>
+      <li>
+        <div class="icon">📄</div>
+        <div>
+          <strong>Auto Resume Tailoring</strong>
+          <span>Resume customized for each job automatically</span>
+        </div>
+      </li>
+    </ul>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>"HireNix found me a job I never would have discovered. Got 4 interviews in my first week. Absolutely worth it."</p>
+      <div class="t-author">
+        <div class="t-avatar">S</div>
+        <div>
+          <div class="t-name">Sarah M.</div>
+          <div class="t-role">Software Engineer · Chicago, IL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right">
+  <div class="form-box">
+    <div class="plan-badge">🚀 Free plan — No credit card required</div>
+    <h1>Create Your Account</h1>
+    <p class="sub">Already have an account? <a href="/login">Sign in here</a></p>
+
+    <!-- GOOGLE LOGIN -->
+    <a href="#" class="google-btn" onclick="handleGoogleSignup()">
+      <svg class="google-icon" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Continue with Google
+    </a>
+
+    <!-- DIVIDER -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>or sign up with email</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- EMAIL FORM -->
+    <form onsubmit="handleEmailSignup(event)">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="e.g. John Smith" required />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="you@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" placeholder="At least 8 characters" required minlength="8" />
+      </div>
+      <button type="submit" class="submit-btn">Create My Free Account →</button>
+    </form>
+
+    <p class="terms-note">
+      By signing up, you agree to our
+      <a href="/terms">Terms of Service</a> and
+      <a href="/privacy">Privacy Policy</a>.
+      Your data is safe with us. 🔒
+    </p>
+    <div class="login-link">
+      Already have an account? <a href="/login">Sign in →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function handleGoogleSignup() {
+    // Google OAuth will be wired up in backend phase
+    alert('Google Sign-Up coming soon! Please use email signup for now.');
+  }
+  function handleEmailSignup(e) {
+    e.preventDefault();
+    // Redirect to onboarding after signup
+    window.location.href = '/onboarding';
+  }
+</script>
+
+</body>
+</html>
